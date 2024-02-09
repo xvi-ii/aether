@@ -44,30 +44,30 @@ class Data:
     def increment(self) -> int:
         return self.snowflake & 0xFFF
 
-class Snowflake[T]:
-    def __init__(self: T) -> None:
+class Snowflake(typing.Generic[const.T]):
+    def __init__(self: const.T) -> None:
         self = self
 
-    def __eq__(self: T, other: T) -> bool:
-        return T(self) == T(other)
+    def __eq__(self: const.T, other: const.T) -> bool:
+        return const.T(self) == const.T(other)
     
-    def __repr__(self: T) -> str:
+    def __repr__(self: const.T) -> str:
         return str(self)
     
-    def __str__(self: T) -> str:
+    def __str__(self: const.T) -> str:
         return str(self)
     
-    def __int__(self: T) -> int:
+    def __int__(self: const.T) -> int:
         return int(self)
     
-    def __enter__(self: T) -> Data:
+    def __enter__(self: const.T) -> Data:
         return Data(self)
     
-    def __exit__(self: T, *exc) -> None:
+    def __exit__(self: const.T, *exc) -> None:
         return None
     
     @property
-    def created_on(self: T) -> Timestamp:
+    def created_on(self: const.T) -> Timestamp:
         with Snowflake(self) as data:
             return Timestamp.utcfromtimestamp(data.timestamp)
 
@@ -76,7 +76,7 @@ utils.unsupported_type(Snowflake)
 @attrs.define(kw_only=True)
 class Object:
     id: Snowflake[str]
-    _client: 'Connection' # type: ignore
+    _client: 'client.Connection' # type: ignore
 
 Partial = typing.Mapping[str, const.T]
 utils.unsupported_type(Partial)

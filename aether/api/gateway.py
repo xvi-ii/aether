@@ -81,6 +81,7 @@ class Connection:
     _token: str
     _ws: websocket.WebSocketConnection = None
     _tasks = None
+    _client: 'client.Connection' = None # type: ignore
 
     @property
     def token(self) -> str:
@@ -205,16 +206,16 @@ class Connection:
                 self._state.session_id = payload.d['session_id']
             case _:                         pass
 
-    # async def _dispatch(self, payload: Payload) -> None:
-    #     name = payload.t.lower()
-    #     data = lambda T: cattrs.structure(payload.d or const.empty, T)
-    #     send = lambda *E: await self._client._spawn(name, *(data(e) for e in E))
-    #     match payload.t.upper():
-    #         case 'HELLO':           send(*events.Hello)
-    #         case 'READY':           send(*events.Ready)
-    #         case 'RESUMED':         send(*events.Resumed)
-    #         case 'RECONNECT':       send(*events.Reconnect)
-    #         case 'INVALID_SESSION': send(*events.InvalidSession)
+    async def _dispatch(self, payload: Payload) -> None:
+        name = payload.t.lower()
+        data = lambda T:  cattrs.structure(payload.d or const.empty, T)
+        send = lambda *D: await self._client._spawn(name, *(data(d) for d in D))
+        match payload.t.upper():
+            case 'HELLO':           send(*events.Hello)
+            case 'READY':           send(*events.Ready)
+            case 'RESUMED':         send(*events.Resumed)
+            case 'RECONNECT':       send(*events.Reconnect)
+            case 'INVALID_SESSION': send(*events.InvalidSession)
 
     @utils.can_access_token
     async def _identify(

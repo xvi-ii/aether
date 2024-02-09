@@ -8,9 +8,7 @@ import trio
 log = logging.basicConfig(level=logging.DEBUG)
 dotenv.load_dotenv()
 
-async def run(token):
-    async with aether.Connection(token=token) as gw:
-        ...
+client = aether.Client()
 
 if __name__ == '__main__':
-    trio.run(run, os.getenv("BOT_TOKEN"))
+    trio.run(client.start, os.getenv("BOT_TOKEN"))
