@@ -1,7 +1,6 @@
 import tabulate
 import ujson
 
-from ... import const
 from . import safety
 
 def dict_as_table(json: dict | None) -> str:

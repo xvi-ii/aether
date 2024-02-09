@@ -10,6 +10,7 @@ import trio_websocket as websocket
 import typing
 import ujson
 
+from . import events
 from .. import const
 from ..core import utils
 
@@ -100,7 +101,7 @@ class Connection:
         self._tasks = trio.open_nursery(strict_exception_groups=True)
         scheduler = await self._tasks.__aenter__()
         scheduler.start_soon(self._heartbeat)
-        scheduler.start_soon(self.reconnect)
+        scheduler.start_soon(self.restart)
         return self
     
     async def __aexit__(self, *exc):
@@ -131,7 +132,7 @@ class Connection:
             logger.exception(exc)
             return
 
-    async def connect(
+    async def start(
         self,
         token: str,
         *,
@@ -161,7 +162,7 @@ class Connection:
             logger.exception(exc)
             return
         
-    async def disconnect(self, *, reset_state: const.Maybe[bool] = const.empty) -> None:
+    async def close(self, *, reset_state: const.Maybe[bool] = const.empty) -> None:
         if (
             isinstance(self._ws, websocket.WebSocketConnection)
             and not self._ws.closed
@@ -170,9 +171,9 @@ class Connection:
         if reset_state := utils.contains_or(reset_state, False):
             self._state = _State()
 
-    async def reconnect(self) -> None:
+    async def restart(self) -> None:
         if self._ws == None or self._ws.closed:
-            await self.connect(
+            await self.start(
                 self._token,
                 version=utils.contains_or(self._state.version, 10),
                 encoding=utils.contains_or(self._state.encoding, 'json'),
@@ -187,7 +188,7 @@ class Connection:
             case OpCode.RESUME:             await self._resume()
             case OpCode.INVALID_SESSION:
                 if payload.d:               await self._resume()
-                else:                       await self.disconnect()
+                else:                       await self.close()
             case OpCode.RECONNECT:          await self._resume()
             case OpCode.HELLO:
                 if self._state.session_id:  await self._resume()
@@ -203,7 +204,18 @@ class Connection:
                 self._state.resume_gateway_url = payload.d['resume_gateway_url']
                 self._state.session_id = payload.d['session_id']
             case _:                         pass
-    
+
+    # async def _dispatch(self, payload: Payload) -> None:
+    #     name = payload.t.lower()
+    #     data = lambda T: cattrs.structure(payload.d or const.empty, T)
+    #     send = lambda *E: await self._client._spawn(name, *(data(e) for e in E))
+    #     match payload.t.upper():
+    #         case 'HELLO':           send(*events.Hello)
+    #         case 'READY':           send(*events.Ready)
+    #         case 'RESUMED':         send(*events.Resumed)
+    #         case 'RECONNECT':       send(*events.Reconnect)
+    #         case 'INVALID_SESSION': send(*events.InvalidSession)
+
     @utils.can_access_token
     async def _identify(
         self,
