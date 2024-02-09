@@ -3,11 +3,10 @@ import typing
 
 from ... import const
 
-def build(T: const.T, data: const.T) -> const.T:
-    return data(T)
+def build(data: const.T, T: const.T) -> const.T:
+    return T(data)
 
 def unsupported_type(T: const.T) -> None:
-    print(T)
     # if mult_typ := typing.get_args(T):
     #     print(mult_typ)
     #     for typ in mult_typ:

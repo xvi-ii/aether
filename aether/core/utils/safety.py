@@ -1,10 +1,14 @@
+import random
+
 from ... import const
 
-def token_safe(fn) -> None:
-    def func(fn):
-        const.access_token = True
-        return fn
-    return func
+def can_access_token(fn) -> None:
+    const.token_access = True
+    return fn
+
+def garble_token(token: str) -> str:
+    chars = '▖▗▘▙▚▛▜▝▞▟▂▃▄▅▆▇█▉▊▋▌▍'
+    return ''.join([random.choice(chars) for _ in range(len(token))])
 
 def lock_token() -> None:
-    const.access_token = False
+    const.token_access = False

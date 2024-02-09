@@ -345,6 +345,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "tabulate"
+version = "0.9.0"
+description = "Pretty-print tabular data"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+widechars = ["wcwidth"]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -429,7 +440,7 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "2f9548faaed8ea8f0925703bd9ac0ede40e2b9d9feb511f16bd7d2f9000dfeaa"
+content-hash = "eb59c0aad58c383a73d192a0ce22acc82ba4a91d912fd53251e3b680118686dc"
 
 [metadata.files]
 aenum = []
@@ -464,6 +475,7 @@ python-dotenv = []
 pyyaml = []
 sniffio = []
 sortedcontainers = []
+tabulate = []
 tomli = []
 trio = []
 trio-websocket = []

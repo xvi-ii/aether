@@ -14,6 +14,7 @@ attrs = "^23.2.0"
 cattrs = "^23.2.3"
 ujson = "^5.9.0"
 python-dotenv = "^1.0.1"
+tabulate = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 black = "^24.1.1"
