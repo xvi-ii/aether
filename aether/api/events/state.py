@@ -1,8 +1,7 @@
 import attrs
-import typing
 
-from .. import resources
-from ... import const
+from aether import const
+from aether.api import resources
 
 @attrs.define(kw_only=True)
 class Hello:
@@ -18,6 +17,6 @@ class Ready:
     shard: const.Maybe[tuple[int, int]] = const.empty
     application: resources.Partial
 
-Resumed: typing.TypeAlias = const.Maybe
-Reconnect: typing.TypeAlias = const.Maybe
-InvalidSession: typing.TypeAlias = const.Maybe
+Resumed = const.empty
+Reconnect = const.empty
+InvalidSession = const.empty

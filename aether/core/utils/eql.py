@@ -1,5 +1,7 @@
 from ... import const
 
+__all__ = ('contains', 'contains_or', 'contains_all')
+
 def contains(expected: const.Maybe[const.T]) -> bool:
     return expected is not const.empty
 

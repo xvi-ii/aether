@@ -1,7 +1,8 @@
 import cattrs
-import typing
 
 from ... import const
+
+__all__ = ('build', 'unsupported_type')
 
 def build(data: const.T, T: const.T) -> const.T:
     return T(data)

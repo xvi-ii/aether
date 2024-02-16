@@ -86,7 +86,7 @@ class Connection:
     @property
     def token(self) -> str:
         if const.token_access:  return self._token
-        else:                   return 'Not allowed'
+        else:                   raise Exception('Not allowed')
     
     @token.setter
     def token(self, value: str) -> None:
@@ -113,7 +113,11 @@ class Connection:
         dict_as_json = ujson.dumps(payload_as_dict)
         try:
             await self._ws.send_message(dict_as_json)
-            table = utils.dict_as_table(payload.d if not isinstance(payload.d, (int, bool)) else payload_as_dict)
+            table = utils.dict_as_table(
+                payload.d
+                if not isinstance(payload.d, (int, bool))
+                else payload_as_dict
+            )
             logger.debug(f"<- {payload.t or payload.op.name}\n{table}")
             return 1
         except websocket.ConnectionClosed as exc:
@@ -206,16 +210,19 @@ class Connection:
                 self._state.session_id = payload.d['session_id']
             case _:                         pass
 
-    async def _dispatch(self, payload: Payload) -> None:
-        name = payload.t.lower()
-        data = lambda T:  cattrs.structure(payload.d or const.empty, T)
-        send = lambda *D: await self._client._spawn(name, *(data(d) for d in D))
-        match payload.t.upper():
-            case 'HELLO':           send(*events.Hello)
-            case 'READY':           send(*events.Ready)
-            case 'RESUMED':         send(*events.Resumed)
-            case 'RECONNECT':       send(*events.Reconnect)
-            case 'INVALID_SESSION': send(*events.InvalidSession)
+    # async def _dispatch(self, payload: Payload) -> None:
+    #     name = payload.t.lower()
+    #     data = lambda T:  cattrs.structure(payload.d, T) if payload.d else const.empty
+    #     send = lambda *D: await self._client._spawn(
+    #         name,
+    #         *(data(d) for d in D) if payload.d else const.empty
+    #     )
+    #     match payload.t.upper():
+    #         case 'HELLO':           send(*events.Hello)
+    #         case 'READY':           send(*events.Ready)
+    #         case 'RESUMED':         send(*events.Resumed)
+    #         case 'RECONNECT':       send(*events.Reconnect)
+    #         case 'INVALID_SESSION': send(*events.InvalidSession)
 
     @utils.can_access_token
     async def _identify(

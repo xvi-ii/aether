@@ -3,6 +3,8 @@ import ujson
 
 from . import safety
 
+__all__ = ('dict_as_table')
+
 def dict_as_table(json: dict | None) -> str:
     if isinstance(json, dict):
         for key, value in json.items():

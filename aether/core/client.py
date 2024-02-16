@@ -1,5 +1,8 @@
-from .. import const, utils
+from aether import const
+from aether.core import utils
 from ..api import gateway
+
+__all__ = ('Client')
 
 class Connection:
     intents: gateway.Intents

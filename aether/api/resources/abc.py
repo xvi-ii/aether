@@ -4,7 +4,8 @@ import typing
 
 from datetime import datetime
 
-from ... import const, utils
+from aether import const
+from aether.core import utils
 
 class TimestampStyle(aenum.StrEnum):
     SHORT_TIME = 't'
@@ -78,5 +79,38 @@ class Object:
     id: Snowflake[str]
     _client: 'client.Connection' # type: ignore
 
-Partial = typing.Mapping[str, const.T]
+class Partial(typing.Mapping[str, const.T]): ... 
 utils.unsupported_type(Partial)
+
+class Endpoint:
+    class CDN(aenum.StrEnum):
+        CUSTOM_EMOJI = 'emojis/{emoji_id}'
+        GUILD_ICON = 'icons/{guild_id}'
+        GUILD_SPLASH = 'splashes/{guild_id}/{guild_splash}'
+        GUILD_DISCOVERY_SPLASH = 'discovery-splashes/{guild_id}/{guild_discovery_splash}'
+        GUILD_BANNER = 'banners/{guild_id}/{guild_banner}'
+        USER_BANNER = 'banners/{user_id}/{user_banner}'
+        DEFAULT_USER_AVATAR = 'embed/avatars/{index}'
+        USER_AVATAR = 'avatars/{user_id}/{user_avatar}'
+        GUILD_MEMBER_AVATAR = 'guilds/{guild_id}/users/{user_id}/avatars/{member_avatar}'
+        USER_AVATAR_DECORATION = 'avatar-decorations/{user_id}/{user_avatar_decoration}'
+        APPLICATION_ICON = 'app-icons/{application_id}/{icon}'
+        APPLICATION_COVER = 'app-icons/{application_id}/{cover_image}'
+        APPLICATION_ASSET = 'app-assets/{application_id}/{asset_id}'
+        ACHIEVEMENT_ICON = 'app-assets/{application_id}/achievements/{achievement_id}/icons/{icon_hash}'
+        STORE_PAGE_ASSET = 'app-assets/{application_id}/store/{asset_id}'
+        STICKER_PACK_BANNER = 'app-assets/{applicaion_id}/store/{sticker_pack_banner_asset_id}'
+        TEAM_ICON = 'team-icons/{team_id}/{team_icon}'
+        STICKER = 'stickers/{sticker_id}'
+        ROLE_ICON = 'role-icons/{role_id}/{role_icon}'
+        GUILD_SCHEDULED_EVENT_COVER = 'guild-events/{scheduled_event_id}/{scheduled_event_cover_image}'
+        GUILD_MEMBER_BANNER = 'guilds/{guild_id}/users/{user_id}/banners/{member_banner}'
+class Asset(str):
+    @classmethod
+    def resolve(cls, path: Endpoint.CDN, *, animated: const.Maybe[bool] = const.empty, **kwargs) -> str:
+        animated = utils.contains_or(animated, True if 'a_' in kwargs.keys() else False)
+        file_type = '.gif' if animated else '.png' # fuck .jpeg
+        return path.format(**kwargs) + file_type
+        
+    
+utils.unsupported_type(Asset)
