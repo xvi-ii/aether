@@ -4,12 +4,12 @@ import logging
 import logging.config
 import trio
 
-from aether.core import Client
+from aether.core import Connection
 
 log = logging.basicConfig(level=logging.DEBUG)
 dotenv.load_dotenv()
 
-client = Client()
+app = Connection()
 
 if __name__ == '__main__':
-    trio.run(client.start, os.getenv("BOT_TOKEN"))
+    trio.run(app.start, os.getenv("BOT_TOKEN"))

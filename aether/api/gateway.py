@@ -210,19 +210,19 @@ class Connection:
                 self._state.session_id = payload.d['session_id']
             case _:                         pass
 
-    # async def _dispatch(self, payload: Payload) -> None:
-    #     name = payload.t.lower()
-    #     data = lambda T:  cattrs.structure(payload.d, T) if payload.d else const.empty
-    #     send = lambda *D: await self._client._spawn(
-    #         name,
-    #         *(data(d) for d in D) if payload.d else const.empty
-    #     )
-    #     match payload.t.upper():
-    #         case 'HELLO':           send(*events.Hello)
-    #         case 'READY':           send(*events.Ready)
-    #         case 'RESUMED':         send(*events.Resumed)
-    #         case 'RECONNECT':       send(*events.Reconnect)
-    #         case 'INVALID_SESSION': send(*events.InvalidSession)
+    async def _dispatch(self, payload: Payload) -> None:
+        name = payload.t.lower()
+        data = lambda T:  cattrs.structure(payload.d, T) if payload.d else const.empty
+        send = lambda *D: await self._client._spawn(
+            name,
+            *(data(d) for d in D) if payload.d else const.empty
+        )
+        match payload.t.upper():
+            case 'HELLO':           send(*events.Hello)
+            case 'READY':           send(*events.Ready)
+            case 'RESUMED':         send(*events.Resumed)
+            case 'RECONNECT':       send(*events.Reconnect)
+            case 'INVALID_SESSION': send(*events.InvalidSession)
 
     @utils.can_access_token
     async def _identify(
