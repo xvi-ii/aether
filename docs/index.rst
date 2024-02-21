@@ -3,18 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to aether's documentation!
-==================================
+aether
+======
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+**aether** is a highly experimental, fast and robust API library for Discord.
 
+This project is being built from the learning lessons of interactions.py and retux.
+The scope and goals of this project are simple:
 
+- Lightweight, strict API typings for data structures, including events and resources
+- Fast runtime and wall time
+- Simple and compact
 
-Indices and tables
-==================
+aether is not a fully fledged library – it is meant to be an educational resource for
+others aspiring to become library developers. Please do not use aether while in alpha
+state as it is likely bound to change at any given moment.
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+More details can be found on the repository and stream VODs.
